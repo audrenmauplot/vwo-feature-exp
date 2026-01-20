@@ -28,10 +28,35 @@ export const GET: APIRoute = async ({ request }) => {
     }
     return null;
   }
+
   const cookieUserId = getCookie("vwo_user_id") || getCookie("userId") || null;
 
-  let userId = headerUserId || queryUserId || cookieUserId || `uid_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+  // Custom variables depuis query (?cv=...json...)
+  const cvRaw = reqUrl.searchParams.get("cv"); // ex: {"plan":"pro","country":"FR","age":32}
+  let customVariables: Record<string, any> | undefined;
+  try {
+    customVariables = cvRaw ? JSON.parse(cvRaw) : undefined;
+  } catch {
+    customVariables = undefined;
+  }
+
+  // userAgent depuis le header
+  const userAgent = request.headers.get("user-agent") || undefined;
+
+  // ipAddress depuis proxy headers (POC-friendly)
+  const xff = request.headers.get("x-forwarded-for") || "";
+  const ipAddress = (xff.split(",")[0] || "").trim() || request.headers.get("x-real-ip") || undefined;
+
+  const userId = headerUserId || queryUserId || cookieUserId || `uid_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
   const userIdSource = headerUserId ? "header" : queryUserId ? "query" : cookieUserId ? "cookie" : "generated";
+
+  // Build context
+  const userContext = {
+    id: userId,
+    customVariables,
+    userAgent,
+    ipAddress,
+  };
 
   // Helpful debug log — remove or lower in production
   console.debug("vwo-flag: resolved userId", { userId, userIdSource, headerUserId, queryUserId, cookieUserId });
@@ -53,7 +78,7 @@ export const GET: APIRoute = async ({ request }) => {
     : undefined;
 
   const vwoClient = await getClient(accountId, sdkKey);
-  const flag = await vwoClient.getFlag(flagKey, { id: userId });
+  const flag = await vwoClient.getFlag(flagKey, userContext);
 
   const enabled = flag.isEnabled();
   const titleVariation = flag.getVariable("title_variation", "Title Fallback");
@@ -67,5 +92,24 @@ export const GET: APIRoute = async ({ request }) => {
     "cache-control": debug ? "no-store" : "public, max-age=0, must-revalidate",
   };
 
-  return new Response(JSON.stringify(payload), { headers: responseHeaders });
+  // -------- 4) DEBUG: expose the context in the response
+  return new Response(
+    JSON.stringify({
+      flagKey,
+      enabled,
+      title_variation: titleVariation,
+      variables,
+
+      // 👇 DEBUG ONLY — remove in prod
+      debug: {
+        userContext: {
+          id: userContext.id,
+          customVariables: userContext.customVariables,
+          userAgent: userContext.userAgent ? "present" : null,
+          ipAddress: userContext.ipAddress || null,
+        },
+      },
+    }),
+    { headers: { "content-type": "application/json" } }
+  );
 };

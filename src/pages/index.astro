@@ -400,10 +400,18 @@ const metadata = {
       localStorage.setItem(storageKey, userId);
     }
 
-    console.log("[FRONT] userId", userId);
+    const cv = JSON.parse(localStorage.getItem("vwo_custom_vars") || "{}");
 
     const flagKey = "landingContent";
-    const url = `/api/vwo-flag.json?flagKey=${encodeURIComponent(flagKey)}&t=${Date.now()}`;
+
+    console.log("[FRONT] userId", userId);    
+    console.log("[FRONT] customVars", cv);
+  
+    const url =
+      `/api/vwo-flag.json?flagKey=${encodeURIComponent(flagKey)}` +
+      `&t=${Date.now()}` +
+      `&cv=${encodeURIComponent(JSON.stringify(cv))}`;
+
 
     const res = await fetch(url, {
       cache: "no-store",

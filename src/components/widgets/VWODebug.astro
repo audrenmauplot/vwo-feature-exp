@@ -17,46 +17,99 @@
     <span id="vwo-user-id">–</span>
   </div>
 
+  <div class="vwo-debug__label">Custom Variables</div>
+
+  <div class="vwo-debug__row">
+    <label for="vwo-cv-plan">plan</label>
+    <select id="vwo-cv-plan">
+      <option value="free">free</option>
+      <option value="pro">pro</option>
+      <option value="enterprise">enterprise</option>
+    </select>
+  </div>
+
+  <div class="vwo-debug__row">
+    <label for="vwo-cv-country">country</label>
+    <select id="vwo-cv-country">
+      <option value="FR">FR</option>
+      <option value="US">US</option>
+      <option value="UK">UK</option>
+    </select>
+  </div>
+
+  <div class="vwo-debug__row">
+    <label for="vwo-cv-device">device</label>
+    <select id="vwo-cv-device">
+      <option value="desktop">desktop</option>
+      <option value="mobile">mobile</option>
+      <option value="tablet">tablet</option>
+    </select>
+  </div>
+
   <div class="vwo-debug__actions">
-    <button id="vwo-apply">Apply userId</button>
+    <button id="vwo-apply">Apply</button>
     <button id="vwo-reset">Reset bucketing</button>
   </div>
 </div>
 
-
 <script is:inline>
   (function () {
-    const STORAGE_KEY = "vwo_uid";
+    const STORAGE_UID = "vwo_uid";
+    const STORAGE_CV = "vwo_custom_vars";
 
-    // Ensure userId exists
-    let userId = localStorage.getItem(STORAGE_KEY);
+    // userId
+    let userId = localStorage.getItem(STORAGE_UID);
     if (!userId) {
       userId = crypto.randomUUID();
-      localStorage.setItem(STORAGE_KEY, userId);
+      localStorage.setItem(STORAGE_UID, userId);
     }
 
-    const userIdEl = document.getElementById("vwo-user-id");
-    const inputEl = document.getElementById("vwo-user-input");
-    const applyBtn = document.getElementById("vwo-apply");
-    const resetBtn = document.getElementById("vwo-reset");
+    // Load CV from storage or defaults
+    const defaults = { plan: "free", country: "FR", device: "desktop" };
+    let cv = defaults;
+    try {
+      cv = JSON.parse(localStorage.getItem(STORAGE_CV) || "") || defaults;
+    } catch {}
 
-    // Display current userId
+    // Fill UI
+    const inputEl = document.getElementById("vwo-user-input");
+    const userIdEl = document.getElementById("vwo-user-id");
+    const planEl = document.getElementById("vwo-cv-plan");
+    const countryEl = document.getElementById("vwo-cv-country");
+    const deviceEl = document.getElementById("vwo-cv-device");
+
     userIdEl.textContent = userId;
     inputEl.value = userId;
 
-    // Apply custom userId
-    applyBtn.addEventListener("click", () => {
+    planEl.value = cv.plan || "free";
+    countryEl.value = cv.country || "FR";
+    deviceEl.value = cv.device || "desktop";
+
+    function saveCvFromUI() {
+      const next = {
+        plan: planEl.value,
+        country: countryEl.value,
+        device: deviceEl.value,
+      };
+      localStorage.setItem(STORAGE_CV, JSON.stringify(next));
+      return next;
+    }
+
+    // Apply userId + CV
+    document.getElementById("vwo-apply")?.addEventListener("click", () => {
       const newId = inputEl.value.trim();
       if (!newId) return;
 
-      localStorage.setItem(STORAGE_KEY, newId);
+      localStorage.setItem(STORAGE_UID, newId);
+      saveCvFromUI();
       location.reload();
     });
 
-    // Reset bucketing (new random user)
-    resetBtn.addEventListener("click", () => {
-      localStorage.removeItem(STORAGE_KEY);
+    // Reset: new random user, keep CV (ou tu peux aussi reset CV si tu veux)
+    document.getElementById("vwo-reset")?.addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_UID);
       location.reload();
     });
   })();
 </script>
+
