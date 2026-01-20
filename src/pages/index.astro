@@ -33,11 +33,12 @@ const metadata = {
     ]}
     image={{ src: '~/assets/images/hero-image.png', alt: 'Splitly Hero Image' }}
   >
-    <Fragment slot="title">Boost conversions with reliable A/B testing</Fragment>
+    <Fragment slot="title">
+      <span data-vwo="hero-title"></span>
+    </Fragment>
 
     <Fragment slot="subtitle">
-      Splitly is an experimentation platform that helps product and growth teams run A/B tests, feature flags,
-      and personalization to increase conversions and learn faster.
+      <span data-vwo="hero-subtitle"></span>
     </Fragment>
   </Hero>
 
@@ -388,3 +389,33 @@ const metadata = {
     </Fragment>
   </CallToAction>
 </Layout>
+
+<script is:inline>
+  (async function () {
+    // userId stable => bucketing stable
+    const storageKey = "vwo_uid";
+    const userId = localStorage.getItem(storageKey) || crypto.randomUUID();
+    localStorage.setItem(storageKey, userId);
+
+    const flagKey = "landingContent";
+
+    const res = await fetch(
+      `/api/vwo-flag.json?flagKey=${encodeURIComponent(flagKey)}&userId=${encodeURIComponent(userId)}`
+    );
+    const data = await res.json();
+
+    // Exemple: tu utilises une variable VWO pour le titre
+    const titleEl = document.querySelector('[data-vwo="hero-title"]');
+    if (titleEl && data?.title_variation) {
+      titleEl.textContent = data.title_variation;
+    }
+
+    // Exemple: tu peux faire pareil avec une variable hero_subtitle si tu la crées côté VWO
+    const subtitleEl = document.querySelector('[data-vwo="hero-subtitle"]');
+    if (subtitleEl && data?.variables?.hero_subtitle) {
+      subtitleEl.textContent = data.variables.hero_subtitle;
+    }
+
+    console.log("[VWO]", data);
+  })();
+</script>

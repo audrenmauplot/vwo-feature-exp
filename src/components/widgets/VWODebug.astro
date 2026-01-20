@@ -1,0 +1,35 @@
+---
+
+---
+
+<div id="vwo-debug">
+  <div class="vwo-debug__label">VWO User</div>
+  <div class="vwo-debug__id" id="vwo-user-id">–</div>
+  <button id="vwo-reset">Reset bucketing</button>
+</div>
+
+<script is:inline>
+  (function () {
+    const STORAGE_KEY = "vwo_uid";
+
+    // Ensure userId exists
+    let userId = localStorage.getItem(STORAGE_KEY);
+    if (!userId) {
+      userId = crypto.randomUUID();
+      localStorage.setItem(STORAGE_KEY, userId);
+    }
+
+    // Display userId
+    const userIdEl = document.getElementById("vwo-user-id");
+    if (userIdEl) {
+      userIdEl.textContent = userId;
+    }
+
+    // Reset handler
+    const resetBtn = document.getElementById("vwo-reset");
+    resetBtn?.addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    });
+  })();
+</script>
