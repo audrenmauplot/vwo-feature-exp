@@ -38,6 +38,19 @@ export const GET: APIRoute = async ({ request }) => {
 
   // flagKey peut rester en query (simple) ou header aussi
   const flagKey = reqUrl.searchParams.get("flagKey") || "landingContent";
+  const debug = reqUrl.searchParams.get("debug") === "1" || reqUrl.searchParams.get("debug") === "true";
+  const headersObj: Record<string, string> = Object.fromEntries(request.headers.entries?.() ?? []);
+  const debugInfo = debug
+    ? {
+        headers: {
+          has_x_vwo_user_id: !!headersObj["x-vwo-user-id"],
+          x_vwo_user_id: headersObj["x-vwo-user-id"] || null,
+          cookie_present: !!headersObj["cookie"],
+          cookie_masked: headersObj["cookie"] ? "[REDACTED]" : null,
+          allHeaderKeys: Object.keys(headersObj),
+        },
+      }
+    : undefined;
 
   const vwoClient = await getClient(accountId, sdkKey);
   const flag = await vwoClient.getFlag(flagKey, { id: userId });
@@ -46,8 +59,8 @@ export const GET: APIRoute = async ({ request }) => {
   const titleVariation = flag.getVariable("title_variation", "Title Fallback");
   const variables = flag.getVariables?.() ?? [];
 
-  return new Response(
-    JSON.stringify({ flagKey, userId, userIdSource, enabled, title_variation: titleVariation, variables }),
-    { headers: { "content-type": "application/json" } }
-  );
+  const payload: any = { flagKey, userId, userIdSource, enabled, title_variation: titleVariation, variables };
+  if (debugInfo) payload.debug = debugInfo;
+
+  return new Response(JSON.stringify(payload), { headers: { "content-type": "application/json" } });
 };
