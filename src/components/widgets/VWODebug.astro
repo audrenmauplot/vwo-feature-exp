@@ -3,10 +3,26 @@
 ---
 
 <div id="vwo-debug">
-  <div class="vwo-debug__label">VWO User</div>
-  <div class="vwo-debug__id" id="vwo-user-id">–</div>
-  <button id="vwo-reset">Reset bucketing</button>
+  <div class="vwo-debug__label">VWO User ID</div>
+
+  <input
+    id="vwo-user-input"
+    type="text"
+    placeholder="Enter user id…"
+    autocomplete="off"
+  />
+
+  <div class="vwo-debug__current">
+    Current:
+    <span id="vwo-user-id">–</span>
+  </div>
+
+  <div class="vwo-debug__actions">
+    <button id="vwo-apply">Apply userId</button>
+    <button id="vwo-reset">Reset bucketing</button>
+  </div>
 </div>
+
 
 <script is:inline>
   (function () {
@@ -19,15 +35,26 @@
       localStorage.setItem(STORAGE_KEY, userId);
     }
 
-    // Display userId
     const userIdEl = document.getElementById("vwo-user-id");
-    if (userIdEl) {
-      userIdEl.textContent = userId;
-    }
-
-    // Reset handler
+    const inputEl = document.getElementById("vwo-user-input");
+    const applyBtn = document.getElementById("vwo-apply");
     const resetBtn = document.getElementById("vwo-reset");
-    resetBtn?.addEventListener("click", () => {
+
+    // Display current userId
+    userIdEl.textContent = userId;
+    inputEl.value = userId;
+
+    // Apply custom userId
+    applyBtn.addEventListener("click", () => {
+      const newId = inputEl.value.trim();
+      if (!newId) return;
+
+      localStorage.setItem(STORAGE_KEY, newId);
+      location.reload();
+    });
+
+    // Reset bucketing (new random user)
+    resetBtn.addEventListener("click", () => {
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     });
