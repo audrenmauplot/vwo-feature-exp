@@ -39,7 +39,7 @@ export const GET: APIRoute = async ({ request }) => {
   // flagKey peut rester en query (simple) ou header aussi
   const flagKey = reqUrl.searchParams.get("flagKey") || "landingContent";
   const debug = reqUrl.searchParams.get("debug") === "1" || reqUrl.searchParams.get("debug") === "true";
-  const headersObj: Record<string, string> = Object.fromEntries(request.headers.entries?.() ?? []);
+  const headersObj: Record<string, string> = Object.fromEntries(Array.from(request.headers.entries()));
   const debugInfo = debug
     ? {
         headers: {
@@ -62,5 +62,10 @@ export const GET: APIRoute = async ({ request }) => {
   const payload: any = { flagKey, userId, userIdSource, enabled, title_variation: titleVariation, variables };
   if (debugInfo) payload.debug = debugInfo;
 
-  return new Response(JSON.stringify(payload), { headers: { "content-type": "application/json" } });
+  const responseHeaders: Record<string, string> = {
+    "content-type": "application/json",
+    "cache-control": debug ? "no-store" : "public, max-age=0, must-revalidate",
+  };
+
+  return new Response(JSON.stringify(payload), { headers: responseHeaders });
 };
