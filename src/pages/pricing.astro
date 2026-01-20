@@ -17,95 +17,53 @@ const metadata = {
 
   <HeroText
     tagline="Pricing"
-    title="Stellar Pricing for Every Journey"
-    subtitle="Choose the perfect plan that aligns with your cosmic goals."
+    title="Simple pricing for growth teams"
+    subtitle="Pay for what you need — start with a free trial."
   />
 
   <!-- Pricing Widget ******************* -->
 
   <Prices
-    title="Our prices"
-    subtitle="Only pay for what you need"
+    title="Pricing Plans"
+    subtitle="Plans built for experiments and growth"
     prices={[
       {
-        title: 'basic',
-        subtitle: 'Optimal choice for personal use',
-        price: 29,
-        period: 'per month',
+        title: 'Starter',
+        subtitle: 'For individual product builders',
+        price: 0,
+        period: 'forever',
         items: [
-          {
-            description: 'Etiam in libero, et volutpat',
-          },
-          {
-            description: 'Aenean ac nunc dolor tristique',
-          },
-          {
-            description: 'Cras scelerisque accumsan lib',
-          },
-          {
-            description: 'In hac habitasse',
-          },
+          { description: 'Up to 5 experiments / month' },
+          { description: 'Feature flags' },
+          { description: 'Email support' },
         ],
-        callToAction: {
-          target: '_blank',
-          text: 'Get started',
-          href: '#',
-        },
+        callToAction: { text: 'Start free', href: '/contact' },
       },
       {
-        title: 'standard',
-        subtitle: 'Optimal choice for small teams',
-        price: 69,
-        period: 'Per Month',
+        title: 'Growth',
+        subtitle: 'For growing teams',
+        price: 99,
+        period: 'per month',
         items: [
-          {
-            description: 'Proin vel laoreet',
-          },
-          {
-            description: 'Ut efficitur habitasse egestas',
-          },
-          {
-            description: 'Volutpat hac curabitur',
-          },
-          {
-            description: 'Pellentesque blandit ut nibh',
-          },
-          {
-            description: 'Donec fringilla sem',
-          },
+          { description: 'Unlimited experiments' },
+          { description: 'Advanced targeting' },
+          { description: 'Analytics & insights' },
         ],
-        callToAction: {
-          target: '_blank',
-          text: 'Get started',
-          href: '#',
-        },
+        callToAction: { text: 'Start trial', href: '/contact' },
         hasRibbon: true,
         ribbonTitle: 'popular',
       },
       {
-        title: 'premium',
-        subtitle: 'Optimal choice for companies',
-        price: 199,
-        period: 'Per Month',
+        title: 'Enterprise',
+        subtitle: 'For large organizations',
+        price: 'Custom',
+        period: '',
         items: [
-          {
-            description: 'Curabitur suscipit risus',
-          },
-          {
-            description: 'Aliquam habitasse malesuada',
-          },
-          {
-            description: 'Suspendisse sit amet blandit',
-          },
-          {
-            description: 'Suspendisse auctor blandit dui',
-          },
+          { description: 'SLA & dedicated support' },
+          { description: 'Single sign-on (SSO)' },
+          { description: 'Onboarding & training' },
         ],
-        callToAction: {
-          target: '_blank',
-          text: 'Get started',
-          href: '#',
-        },
+        callToAction: { text: 'Contact sales', href: '/contact' },
       },
     ]}
   />

@@ -12,32 +12,20 @@ const metadata = {
 <Layout metadata={metadata}>
   <!-- HeroText Widget ******************* -->
 
-  <HeroText tagline="Contact" title="Let's Connect!" />
+  <HeroText tagline="Contact" title="Talk to our team" />
 
   <ContactUs
     id="form"
-    title="Drop us a message today!"
-    subtitle="For quicker answers, explore our FAQs section. You may find the solution you're looking  for right there! If not, our support team is delighted to help you."
+    title="Request a demo or get support"
+    subtitle="Tell us about your goals and we'll recommend the best plan and onboarding path."
     inputs={[
-      {
-        type: 'text',
-        name: 'name',
-        label: 'Name',
-      },
-      {
-        type: 'email',
-        name: 'email',
-        label: 'Email',
-      },
+      { type: 'text', name: 'name', label: 'Name' },
+      { type: 'email', name: 'email', label: 'Work email' },
+      { type: 'text', name: 'company', label: 'Company (optional)' },
     ]}
-    textarea={{
-      label: 'Message',
-    }}
-    disclaimer={{
-      label:
-        'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
-    }}
-    description="Our support team typically responds within 24 business hours."
+    textarea={{ label: 'How can we help?' }}
+    disclaimer={{ label: 'We will use your information to contact you regarding your request.' }}
+    description="Our team typically replies within one business day."
   />
 
   <!-- Features2 Widget ************** -->

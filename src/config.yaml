@@ -1,6 +1,6 @@
 site:
-  name: AstroWind
-  site: 'https://astrowind.vercel.app'
+  name: Splitly
+  site: 'https://splitly.example.com'
   base: '/'
   trailingSlash: false
 
@@ -9,14 +9,14 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: AstroWind
-    template: '%s — AstroWind'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+    default: Splitly
+    template: '%s — Splitly'
+  description: "Splitly — A/B testing and experimentation platform for product and growth teams."
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: AstroWind
+    site_name: Splitly
     images:
       - url: '~/assets/images/default.png'
         width: 1200
